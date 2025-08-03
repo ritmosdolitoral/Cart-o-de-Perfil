@@ -539,6 +539,168 @@
                 border: 1px solid var(--text-primary);
             }
         }
+
+        /* Interactive AI Features */
+        @keyframes floatMessage {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.8);
+            }
+            20% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.1);
+            }
+            80% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.9);
+            }
+        }
+
+        .smart-tooltip {
+            position: absolute;
+            background: rgba(52, 152, 219, 0.95);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            z-index: 1000;
+            pointer-events: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(10px);
+        }
+
+        .floating-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(52, 152, 219, 0.95);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 10000;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        /* Enhanced hover effects */
+        .profile-image {
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .profile-image:hover {
+            transform: scale(1.08) rotate(3deg);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.25), 0 0 50px rgba(52, 152, 219, 0.4);
+        }
+
+        /* Progressive engagement indicators */
+        .link-item {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .link-item::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(52, 152, 219, 0.1), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .link-item:hover::after {
+            left: 100%;
+        }
+
+        /* AI-powered conversation indicators */
+        .conversation-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(52, 152, 219, 0.3);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            opacity: 0;
+            transform: scale(0);
+            animation: pulseIndicator 2s infinite;
+        }
+
+        .conversation-indicator.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        @keyframes pulseIndicator {
+            0%, 100% {
+                box-shadow: 0 8px 24px rgba(52, 152, 219, 0.3);
+            }
+            50% {
+                box-shadow: 0 8px 24px rgba(52, 152, 219, 0.6), 0 0 20px rgba(52, 152, 219, 0.4);
+            }
+        }
+
+        /* Responsive AI features */
+        @media (max-width: 480px) {
+            .conversation-indicator {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+                bottom: 15px;
+                right: 15px;
+            }
+
+            .floating-message {
+                font-size: 12px;
+                padding: 12px 16px;
+                max-width: 280px;
+            }
+
+            .subtle-prompt {
+                font-size: 11px;
+                padding: 8px 12px;
+                max-width: 200px;
+                bottom: 80px;
+                right: 15px;
+            }
+        }
+
+        /* Subtle prompt animations */
+        .subtle-prompt {
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            background: rgba(52, 152, 219, 0.9);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 13px;
+            z-index: 1000;
+            opacity: 0;
+            transform: translateX(20px);
+            transition: all 0.3s ease;
+            max-width: 250px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(10px);
+        }
     </style>
 </head>
 <body>
@@ -704,9 +866,450 @@
             </footer>
         </main>
     </div>
+
+    <!-- AI Conversation Indicator -->
+    <div class="conversation-indicator" id="conversationIndicator" title="Interaja comigo">
+        💬
+    </div>
     
     <!-- JavaScript -->
     <script>
+        // AI-Powered Interactive Features
+        class InteractiveProfile {
+            constructor() {
+                this.visitCount = this.getVisitCount();
+                this.lastVisit = this.getLastVisit();
+                this.interactionCount = 0;
+                this.conversationState = 'initial';
+                this.typingSpeed = 50;
+                this.pageLoadTime = Date.now();
+                this.init();
+            }
+
+            init() {
+                this.setupConversationalElements();
+                this.setupSmartAnimations();
+                this.setupPersonalizedContent();
+                this.setupMicroInteractions();
+                this.setupProgressiveEngagement();
+                this.setupSmartTiming();
+                this.setupEnhancedClickTracking();
+                this.updateVisitData();
+                
+                // Start behavior monitoring
+                setInterval(() => {
+                    this.adaptContentBasedOnBehavior();
+                    this.adaptPersonalityBasedOnInteraction();
+                }, 10000); // Check every 10 seconds
+            }
+
+            getVisitCount() {
+                return parseInt(localStorage.getItem('visitCount') || '0');
+            }
+
+            getLastVisit() {
+                return localStorage.getItem('lastVisit') || null;
+            }
+
+            updateVisitData() {
+                this.visitCount++;
+                localStorage.setItem('visitCount', this.visitCount.toString());
+                localStorage.setItem('lastVisit', new Date().toISOString());
+            }
+
+            setupConversationalElements() {
+                const title = document.querySelector('.profile-title');
+                const description = document.querySelector('.profile-description');
+                
+                // Personalized greeting based on visit count
+                const greetings = [
+                    "Cleber Mantuano • Profissional",
+                    "Cleber Mantuano • Seu parceiro em Búzios",
+                    "Cleber Mantuano • Soluções que funcionam",
+                    "Cleber Mantuano • Experiência que conta"
+                ];
+
+                const descriptions = [
+                    "Já limpei, atendi, vendi, organizei estoque, instalei internet, fiz site e fui motorista. Trabalho certo, com atenção e sem enrolação.",
+                    "De limpeza a desenvolvimento web, de atendimento a instalação de internet. Cada projeto é uma oportunidade de superar expectativas.",
+                    "Versatilidade é minha marca. Do básico ao complexo, cada serviço é executado com a mesma dedicação e qualidade.",
+                    "Não é sobre fazer tudo, é sobre fazer tudo bem feito. Experiência comprovada em múltiplas áreas."
+                ];
+
+                if (this.visitCount > 1) {
+                    const greetingIndex = (this.visitCount - 1) % greetings.length;
+                    const descIndex = (this.visitCount - 1) % descriptions.length;
+                    
+                    this.typeWriter(title, greetings[greetingIndex]);
+                    this.typeWriter(description, descriptions[descIndex]);
+                }
+            }
+
+            typeWriter(element, text) {
+                element.style.opacity = '0';
+                setTimeout(() => {
+                    element.textContent = '';
+                    element.style.opacity = '1';
+                    let i = 0;
+                    const typeInterval = setInterval(() => {
+                        if (i < text.length) {
+                            element.textContent += text.charAt(i);
+                            i++;
+                        } else {
+                            clearInterval(typeInterval);
+                        }
+                    }, this.typingSpeed);
+                }, 500);
+            }
+
+            setupSmartAnimations() {
+                // Progressive animation based on user interaction
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach((entry, index) => {
+                        if (entry.isIntersecting) {
+                            setTimeout(() => {
+                                entry.target.style.animationDelay = `${index * 0.1}s`;
+                                entry.target.style.animationPlayState = 'running';
+                            }, index * 100);
+                        }
+                    });
+                }, { threshold: 0.1 });
+
+                document.querySelectorAll('.link-item').forEach(item => {
+                    observer.observe(item);
+                });
+            }
+
+            setupPersonalizedContent() {
+                const links = document.querySelectorAll('.link-item');
+                
+                // Add subtle hints based on interaction
+                links.forEach((link, index) => {
+                    link.addEventListener('mouseenter', () => {
+                        this.interactionCount++;
+                        this.showSubtleHint(link, index);
+                    });
+                });
+            }
+
+            showSubtleHint(element, index) {
+                const hints = [
+                    "💡 Dica: Este é meu currículo completo",
+                    "🚀 Veja o que posso fazer por você",
+                    "📞 Vamos conversar?",
+                    "🎯 Confira minha experiência",
+                    "👤 Conheça mais sobre mim",
+                    "💼 Meu projeto principal",
+                    "📸 Trabalhos reais",
+                    "🔍 Perfil pessoal"
+                ];
+
+                if (this.interactionCount <= 3 && hints[index]) {
+                    const tooltip = document.createElement('div');
+                    tooltip.className = 'smart-tooltip';
+                    tooltip.textContent = hints[index];
+                    tooltip.style.cssText = `
+                        position: absolute;
+                        background: rgba(52, 152, 219, 0.9);
+                        color: white;
+                        padding: 8px 12px;
+                        border-radius: 6px;
+                        font-size: 12px;
+                        z-index: 1000;
+                        pointer-events: none;
+                        opacity: 0;
+                        transform: translateY(10px);
+                        transition: all 0.3s ease;
+                    `;
+
+                    element.style.position = 'relative';
+                    element.appendChild(tooltip);
+
+                    setTimeout(() => {
+                        tooltip.style.opacity = '1';
+                        tooltip.style.transform = 'translateY(0)';
+                    }, 100);
+
+                    setTimeout(() => {
+                        tooltip.style.opacity = '0';
+                        tooltip.style.transform = 'translateY(-10px)';
+                        setTimeout(() => tooltip.remove(), 300);
+                    }, 3000);
+                }
+            }
+
+            setupMicroInteractions() {
+                // Profile image interaction
+                const profileImage = document.querySelector('.profile-image');
+                if (profileImage) {
+                    profileImage.addEventListener('click', () => {
+                        this.showConfidenceMessage();
+                    });
+                }
+
+                // Social links enhanced interaction
+                document.querySelectorAll('.social-link').forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        this.trackEngagement('social_click', link.getAttribute('aria-label'));
+                    });
+                });
+            }
+
+            showConfidenceMessage() {
+                const messages = [
+                    "Confiança é construída com resultados",
+                    "Cada projeto é uma nova oportunidade",
+                    "Qualidade não é um ato, é um hábito",
+                    "Compromisso com a excelência"
+                ];
+
+                const message = messages[Math.floor(Math.random() * messages.length)];
+                this.showFloatingMessage(message);
+            }
+
+            showFloatingMessage(text) {
+                const message = document.createElement('div');
+                message.className = 'floating-message';
+                message.textContent = text;
+                message.style.cssText = `
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    background: rgba(52, 152, 219, 0.95);
+                    color: white;
+                    padding: 15px 20px;
+                    border-radius: 10px;
+                    font-size: 14px;
+                    font-weight: 600;
+                    z-index: 10000;
+                    opacity: 0;
+                    animation: floatMessage 3s ease-in-out forwards;
+                `;
+
+                document.body.appendChild(message);
+
+                setTimeout(() => {
+                    message.remove();
+                }, 3000);
+            }
+
+            setupProgressiveEngagement() {
+                // Track scroll depth and show engagement
+                let scrollDepth = 0;
+                const trackScroll = utils.debounce(() => {
+                    const scrolled = window.scrollY;
+                    const maxScroll = document.body.scrollHeight - window.innerHeight;
+                    scrollDepth = Math.round((scrolled / maxScroll) * 100);
+
+                    if (scrollDepth > 50 && this.conversationState === 'initial') {
+                        this.conversationState = 'engaged';
+                        this.showEngagementMessage();
+                    }
+                }, 100);
+
+                window.addEventListener('scroll', trackScroll);
+            }
+
+            showEngagementMessage() {
+                const messages = [
+                    "Interessado no que posso oferecer?",
+                    "Vamos transformar sua ideia em realidade?",
+                    "Pronto para começar um projeto juntos?",
+                    "Que tal conversarmos sobre suas necessidades?"
+                ];
+
+                const message = messages[Math.floor(Math.random() * messages.length)];
+                this.showFloatingMessage(message);
+                
+                // Start natural conversation if user is engaged
+                if (this.conversationState === 'engaged') {
+                    setTimeout(() => {
+                        this.startNaturalConversation();
+                    }, 3000);
+                }
+            }
+
+            trackEngagement(action, label) {
+                console.log('Engagement tracked:', action, label);
+                // Here you could integrate with analytics
+            }
+
+            // AI-powered content adaptation
+            adaptContentBasedOnBehavior() {
+                const timeOnPage = Date.now() - this.pageLoadTime;
+                const scrollDepth = this.getScrollDepth();
+                
+                if (timeOnPage > 30000 && scrollDepth > 70) {
+                    this.showAdvancedEngagement();
+                }
+            }
+
+            getScrollDepth() {
+                const scrolled = window.scrollY;
+                const maxScroll = document.body.scrollHeight - window.innerHeight;
+                return Math.round((scrolled / maxScroll) * 100);
+            }
+
+            showAdvancedEngagement() {
+                const advancedMessages = [
+                    "Vejo que você está realmente interessado! Que tal conversarmos?",
+                    "Impressionado com sua atenção aos detalhes. Vamos trabalhar juntos?",
+                    "Você parece ser alguém que valoriza qualidade. Tenho certeza que podemos criar algo incrível.",
+                    "Sua dedicação em explorar meu trabalho me motiva ainda mais. Vamos fazer acontecer?"
+                ];
+
+                const message = advancedMessages[Math.floor(Math.random() * advancedMessages.length)];
+                this.showFloatingMessage(message);
+            }
+
+            // Smart timing for interactions
+            setupSmartTiming() {
+                let interactionTimer = 0;
+                const checkInteraction = setInterval(() => {
+                    interactionTimer += 1000;
+                    
+                    if (interactionTimer === 10000) { // 10 seconds
+                        this.showSubtlePrompt("Dica: Clique na minha foto para uma surpresa");
+                    } else if (interactionTimer === 30000) { // 30 seconds
+                        this.showSubtlePrompt("Interessado em algum serviço específico?");
+                    } else if (interactionTimer === 60000) { // 1 minute
+                        this.showSubtlePrompt("Que tal começarmos um projeto juntos?");
+                    }
+                }, 1000);
+
+                // Reset timer on any interaction
+                document.addEventListener('click', () => {
+                    interactionTimer = 0;
+                });
+            }
+
+            showSubtlePrompt(text) {
+                const prompt = document.createElement('div');
+                prompt.className = 'subtle-prompt';
+                prompt.textContent = text;
+                prompt.style.cssText = `
+                    position: fixed;
+                    bottom: 100px;
+                    right: 20px;
+                    background: rgba(52, 152, 219, 0.9);
+                    color: white;
+                    padding: 10px 15px;
+                    border-radius: 8px;
+                    font-size: 13px;
+                    z-index: 1000;
+                    opacity: 0;
+                    transform: translateX(20px);
+                    transition: all 0.3s ease;
+                    max-width: 250px;
+                    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+                `;
+
+                document.body.appendChild(prompt);
+
+                setTimeout(() => {
+                    prompt.style.opacity = '1';
+                    prompt.style.transform = 'translateX(0)';
+                }, 100);
+
+                setTimeout(() => {
+                    prompt.style.opacity = '0';
+                    prompt.style.transform = 'translateX(20px)';
+                    setTimeout(() => prompt.remove(), 300);
+                }, 4000);
+            }
+
+            // AI-powered personality adaptation
+            adaptPersonalityBasedOnInteraction() {
+                const interactionPattern = this.analyzeInteractionPattern();
+                
+                if (interactionPattern === 'explorer') {
+                    this.showExplorerMessage();
+                } else if (interactionPattern === 'focused') {
+                    this.showFocusedMessage();
+                } else if (interactionPattern === 'casual') {
+                    this.showCasualMessage();
+                }
+            }
+
+            analyzeInteractionPattern() {
+                const scrollDepth = this.getScrollDepth();
+                const timeOnPage = Date.now() - this.pageLoadTime;
+                const clickCount = this.interactionCount;
+
+                if (scrollDepth > 80 && timeOnPage > 45000) {
+                    return 'explorer';
+                } else if (clickCount > 5 && timeOnPage > 30000) {
+                    return 'focused';
+                } else {
+                    return 'casual';
+                }
+            }
+
+            showExplorerMessage() {
+                const messages = [
+                    "Vejo que você gosta de explorar! Tenho muito mais para mostrar.",
+                    "Sua curiosidade me impressiona. Vamos descobrir juntos o que posso fazer por você?",
+                    "Explorador como você merece alguém que também vai além do básico."
+                ];
+                this.showFloatingMessage(messages[Math.floor(Math.random() * messages.length)]);
+            }
+
+            showFocusedMessage() {
+                const messages = [
+                    "Foco é essencial. Vamos direto ao ponto do que você precisa?",
+                    "Vejo que você é objetivo. Que tal conversarmos sobre seu projeto específico?",
+                    "Eficiência é minha especialidade. Vamos trabalhar juntos?"
+                ];
+                this.showFloatingMessage(messages[Math.floor(Math.random() * messages.length)]);
+            }
+
+            showCasualMessage() {
+                const messages = [
+                    "Às vezes as melhores parcerias começam casualmente. Que tal conversarmos?",
+                    "Relaxado e profissional - essa é minha abordagem. Vamos conversar?",
+                    "Sem pressão, mas com resultados. Que tal começarmos?"
+                ];
+                this.showFloatingMessage(messages[Math.floor(Math.random() * messages.length)]);
+            }
+
+            // Natural conversation flow
+            startNaturalConversation() {
+                const conversationSteps = [
+                    { delay: 2000, message: "Oi! Vejo que você está explorando meu trabalho..." },
+                    { delay: 4000, message: "Interessante, não é? Cada projeto tem uma história..." },
+                    { delay: 6000, message: "Que tal conversarmos sobre o que você tem em mente?" }
+                ];
+
+                conversationSteps.forEach((step, index) => {
+                    setTimeout(() => {
+                        if (this.conversationState === 'engaged') {
+                            this.showFloatingMessage(step.message);
+                        }
+                    }, step.delay);
+                });
+            }
+
+            // Enhanced click tracking for better engagement
+            setupEnhancedClickTracking() {
+                document.addEventListener('click', (e) => {
+                    this.interactionCount++;
+                    
+                    // Track specific interactions
+                    if (e.target.closest('.link-item')) {
+                        const linkText = e.target.closest('.link-item').querySelector('.link-text')?.textContent;
+                        this.trackEngagement('link_click', linkText);
+                    } else if (e.target.closest('.profile-image')) {
+                        this.trackEngagement('profile_click', 'profile_image');
+                        this.showConfidenceMessage();
+                    } else if (e.target.closest('.social-link')) {
+                        const socialType = e.target.closest('.social-link').getAttribute('aria-label');
+                        this.trackEngagement('social_click', socialType);
+                    }
+                });
+            }
+        }
+
         // Utilities
         const utils = {
             isLocalFile: () => window.location.protocol === 'file:',
@@ -869,11 +1472,30 @@
 
         // Initialize everything when DOM is loaded
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize AI-powered interactive features
+            const interactiveProfile = new InteractiveProfile();
+            
             initializeApp();
             setupLinkTracking();
             setupAnimationObserver();
             setupTouchEnhancements();
             preloadCriticalResources();
+            
+            // Show conversation indicator after 5 seconds
+            setTimeout(() => {
+                const indicator = document.getElementById('conversationIndicator');
+                if (indicator) {
+                    indicator.classList.add('visible');
+                }
+            }, 5000);
+            
+            // Setup conversation indicator click
+            const indicator = document.getElementById('conversationIndicator');
+            if (indicator) {
+                indicator.addEventListener('click', () => {
+                    interactiveProfile.showEngagementMessage();
+                });
+            }
         });
 
         // Initialize service worker when page is fully loaded
