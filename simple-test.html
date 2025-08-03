@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teste Simples - IA</title>
+    <style>
+        .ai-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .ai-notification.show {
+            transform: translateX(0);
+        }
+        
+        .test-area {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+            border-radius: 10px;
+        }
+        
+        .test-button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .profile-image {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 20px auto;
+            display: block;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-area">
+        <h1>Teste IA - Cleber Mantuano</h1>
+        
+        <img src="https://ugc.production.linktr.ee/77d1d107-304e-40d0-b767-a31cd7aba4b4_WhatsApp-Image-2024-12-19-at-07.36.40.png" 
+             alt="Cleber" 
+             class="profile-image"
+             id="profile-image">
+        
+        <p>Passe o mouse sobre a foto ou clique nos botões para testar:</p>
+        
+        <button class="test-button" onclick="testMessage()">Testar Mensagem</button>
+        <button class="test-button" onclick="testHover()">Testar Hover</button>
+        <button class="test-button" onclick="testScroll()">Testar Scroll</button>
+        
+        <div style="height: 200px; margin-top: 20px; background: #e0e0e0; padding: 20px;">
+            <p>Área para testar scroll - role para baixo e para cima várias vezes</p>
+            <p>Lorem ipsum dolor sit amet...</p>
+            <p>Consectetur adipiscing elit...</p>
+            <p>Sed do eiusmod tempor...</p>
+        </div>
+    </div>
+
+    <script>
+        let isActive = false;
+        let scrollCount = 0;
+        
+        function showMessage(text) {
+            if (isActive) return;
+            
+            isActive = true;
+            console.log('Showing message:', text);
+            
+            // Remove existing notifications
+            const existing = document.querySelectorAll('.ai-notification');
+            existing.forEach(n => n.remove());
+            
+            // Create new notification
+            const notification = document.createElement('div');
+            notification.className = 'ai-notification';
+            notification.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 20px;">💭</span>
+                    <span>${text}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Show notification
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 100);
+            
+            // Hide after 5 seconds
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                    isActive = false;
+                }, 300);
+            }, 5000);
+        }
+        
+        function testMessage() {
+            showMessage('Teste funcionando! A IA está ativa.');
+        }
+        
+        function testHover() {
+            const profileImage = document.getElementById('profile-image');
+            if (profileImage) {
+                profileImage.dispatchEvent(new Event('mouseenter'));
+            }
+        }
+        
+        function testScroll() {
+            window.dispatchEvent(new Event('scroll'));
+        }
+        
+        // Setup event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, setting up listeners...');
+            
+            // Profile image hover
+            const profileImage = document.getElementById('profile-image');
+            if (profileImage) {
+                profileImage.addEventListener('mouseenter', () => {
+                    console.log('Profile hover detected!');
+                    showMessage('Olá! Vejo que você está interessado em conhecer mais sobre mim. Sou Cleber Mantuano, um profissional versátil e confiável.');
+                });
+            }
+            
+            // Scroll tracking
+            window.addEventListener('scroll', () => {
+                scrollCount++;
+                console.log('Scroll detected, count:', scrollCount);
+                if (scrollCount > 3) {
+                    showMessage('Vejo que você está explorando bastante! Isso mostra que valoriza profissionais que realmente entregam resultados.');
+                    scrollCount = 0;
+                }
+            });
+            
+            // Welcome message after 3 seconds
+            setTimeout(() => {
+                showMessage('Bem-vindo! A IA está ativa e pronta para interagir com você.');
+            }, 3000);
+            
+            console.log('All listeners set up successfully!');
+        });
+        
+        console.log('Script loaded successfully');
+    </script>
+</body>
+</html>
