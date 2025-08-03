@@ -221,6 +221,24 @@
         .profile-image:hover {
             transform: scale(1.05) rotate(2deg);
             box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+        }
+        
+        /* Enhanced hover effects for AI interaction */
+        .link-item:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            background: linear-gradient(135deg, #E1F0F5 0%, #D6E3E8 100%);
+            cursor: pointer;
+        }
+        
+        /* Subtle glow effect for engagement */
+        .profile-card:hover {
+            box-shadow: 
+                0 25px 50px rgba(0, 0, 0, 0.1),
+                0 0 0 1px rgba(255, 255, 255, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4),
+                0 0 20px rgba(52, 152, 219, 0.1);
         }
         
         .profile-title {
@@ -529,6 +547,76 @@
             border: 0;
         }
         
+        /* AI Interactive Elements */
+        .ai-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            max-width: 300px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 1rem;
+            padding: 1rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transform: translateX(100%);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        
+        .ai-notification.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        
+        .ai-message {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+        
+        .ai-indicator {
+            font-size: 1.2rem;
+            animation: aiPulse 2s infinite;
+        }
+        
+        .ai-text {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+        
+        @keyframes aiPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .engagement-indicator {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, rgba(52, 152, 219, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            z-index: 999;
+        }
+        
+        .engagement-indicator.active {
+            opacity: 1;
+            animation: engagementPulse 2s infinite;
+        }
+        
+        @keyframes engagementPulse {
+            0%, 100% { transform: scale(1); opacity: 0.3; }
+            50% { transform: scale(1.2); opacity: 0.6; }
+        }
+        
         /* High contrast support */
         @media (prefers-contrast: high) {
             .profile-card {
@@ -540,6 +628,168 @@
             }
         }
     </style>
+    
+    <!-- Gemini AI Integration -->
+    <script>
+        // Gemini AI Configuration
+        const GEMINI_API_KEY = 'AIzaSyBLeXrJpqYdLhxDPClOqQL5bNO7F3D5K4w';
+        const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
+        
+        class InteractiveAI {
+            constructor() {
+                this.conversationHistory = [];
+                this.isActive = false;
+                this.currentContext = '';
+                this.initializeAI();
+            }
+            
+            async initializeAI() {
+                try {
+                    // Pre-load AI responses for better performance
+                    await this.preloadResponses();
+                    this.setupInteractionTriggers();
+                } catch (error) {
+                    console.log('AI initialization skipped:', error.message);
+                }
+            }
+            
+            async preloadResponses() {
+                const responses = [
+                    {
+                        trigger: 'profile_hover',
+                        response: 'Olá! Vejo que você está interessado em conhecer mais sobre mim. Sou Cleber Mantuano, um profissional que já passou por diversas áreas - desde limpeza até desenvolvimento web. Cada experiência me tornou mais versátil e confiável. Que tal explorar um pouco mais?'
+                    },
+                    {
+                        trigger: 'service_interest',
+                        response: 'Interessante! Você parece estar buscando alguém que realmente resolva problemas. Eu não sou apenas mais um profissional - sou alguém que entende que cada trabalho é único e merece atenção especial. Quer ver alguns dos projetos que já fiz?'
+                    },
+                    {
+                        trigger: 'contact_consideration',
+                        response: 'Percebo que você está avaliando se vale a pena entrar em contato. Deixe-me te contar algo: eu não prometo o que não posso cumprir. Trabalho certo, com atenção e sem enrolação. Às vezes, a melhor decisão é a mais simples - falar com quem realmente faz acontecer.'
+                    }
+                ];
+                
+                this.cachedResponses = new Map();
+                responses.forEach(item => {
+                    this.cachedResponses.set(item.trigger, item.response);
+                });
+            }
+            
+            setupInteractionTriggers() {
+                // Profile image hover
+                const profileImage = document.querySelector('.profile-image');
+                if (profileImage) {
+                    profileImage.addEventListener('mouseenter', () => {
+                        this.triggerSubtleResponse('profile_hover');
+                    });
+                }
+                
+                // Service links hover
+                const serviceLinks = document.querySelectorAll('.link-item');
+                serviceLinks.forEach(link => {
+                    link.addEventListener('mouseenter', () => {
+                        const text = link.querySelector('.link-text')?.textContent || '';
+                        if (text.includes('Serviços') || text.includes('trabalho')) {
+                            this.triggerSubtleResponse('service_interest');
+                        }
+                    });
+                });
+                
+                // Contact link hover
+                const contactLink = document.querySelector('a[href*="wa.me"]');
+                if (contactLink) {
+                    contactLink.addEventListener('mouseenter', () => {
+                        this.triggerSubtleResponse('contact_consideration');
+                    });
+                }
+                
+                // Scroll-based interactions
+                this.setupScrollInteractions();
+            }
+            
+            setupScrollInteractions() {
+                let scrollCount = 0;
+                let lastScrollTime = 0;
+                
+                window.addEventListener('scroll', () => {
+                    const now = Date.now();
+                    scrollCount++;
+                    
+                    if (now - lastScrollTime > 2000 && scrollCount > 3) {
+                        this.triggerSubtleResponse('engagement_high');
+                        scrollCount = 0;
+                        lastScrollTime = now;
+                    }
+                });
+            }
+            
+            triggerSubtleResponse(trigger) {
+                if (this.isActive) return;
+                
+                const response = this.cachedResponses.get(trigger);
+                if (response) {
+                    this.showSubtleMessage(response);
+                }
+            }
+            
+            showSubtleMessage(message) {
+                this.isActive = true;
+                
+                // Create subtle notification
+                const notification = document.createElement('div');
+                notification.className = 'ai-notification';
+                notification.innerHTML = `
+                    <div class="ai-message">
+                        <span class="ai-indicator">💭</span>
+                        <span class="ai-text">${message}</span>
+                    </div>
+                `;
+                
+                document.body.appendChild(notification);
+                
+                // Animate in
+                setTimeout(() => {
+                    notification.classList.add('show');
+                }, 100);
+                
+                // Remove after display
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                    setTimeout(() => {
+                        document.body.removeChild(notification);
+                        this.isActive = false;
+                    }, 500);
+                }, 4000);
+            }
+            
+            async generateDynamicResponse(context) {
+                try {
+                    const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            contents: [{
+                                parts: [{
+                                    text: `Você é um assistente sutil e profissional que ajuda a apresentar Cleber Mantuano. 
+                                    Contexto: ${context}
+                                    Responda de forma natural, profissional e sutil, como se fosse uma conversa casual.
+                                    Mantenha o tom confiante mas não arrogante.`
+                                }]
+                            }]
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+                } catch (error) {
+                    console.log('AI response generation failed:', error);
+                    return '';
+                }
+            }
+        }
+    </script>
 </head>
 <body>
     <div class="bg-animation" role="presentation" aria-hidden="true"></div>
@@ -867,6 +1117,240 @@
             });
         }
 
+        // AI Interactive System
+        class InteractiveAI {
+            constructor() {
+                this.isActive = false;
+                this.geminiApiKey = 'AIzaSyBLeXrJpqYdLhxDPClOqQL5bNO7F3D5K4w';
+                this.userBehavior = {
+                    scrollCount: 0,
+                    clickCount: 0,
+                    hoverCount: 0,
+                    timeOnPage: 0,
+                    lastInteraction: Date.now()
+                };
+                this.initializeAI();
+            }
+            
+            initializeAI() {
+                this.preloadResponses();
+                this.setupInteractionTriggers();
+                this.startBehaviorTracking();
+            }
+            
+            startBehaviorTracking() {
+                // Track time on page
+                setInterval(() => {
+                    this.userBehavior.timeOnPage += 1;
+                }, 1000);
+                
+                // Track scroll behavior
+                window.addEventListener('scroll', () => {
+                    this.userBehavior.scrollCount++;
+                    this.userBehavior.lastInteraction = Date.now();
+                });
+                
+                // Track clicks
+                document.addEventListener('click', () => {
+                    this.userBehavior.clickCount++;
+                    this.userBehavior.lastInteraction = Date.now();
+                });
+                
+                // Track hovers
+                document.addEventListener('mouseenter', () => {
+                    this.userBehavior.hoverCount++;
+                    this.userBehavior.lastInteraction = Date.now();
+                });
+            }
+            
+            preloadResponses() {
+                this.responses = {
+                    'profile_hover': 'Olá! Vejo que você está interessado em conhecer mais sobre mim. Sou Cleber Mantuano, um profissional que já passou por diversas áreas - desde limpeza até desenvolvimento web. Cada experiência me tornou mais versátil e confiável.',
+                    'service_interest': 'Interessante! Você parece estar buscando alguém que realmente resolva problemas. Eu não sou apenas mais um profissional - sou alguém que entende que cada trabalho é único e merece atenção especial.',
+                    'contact_consideration': 'Percebo que você está avaliando se vale a pena entrar em contato. Deixe-me te contar algo: eu não prometo o que não posso cumprir. Trabalho certo, com atenção e sem enrolação.',
+                    'engagement_high': 'Vejo que você está explorando bastante! Isso mostra que você valoriza profissionais que realmente entregam resultados. Cada projeto é uma história de sucesso.',
+                    'curriculum_view': 'Excelente escolha! O currículo mostra apenas uma parte do que faço. O que realmente importa é a confiança que construo com cada cliente.',
+                    'whatsapp_interest': 'Perfeito! Você está no caminho certo. O WhatsApp é só para recado, mas é o primeiro passo para uma parceria que pode transformar suas necessidades em soluções.',
+                    'welcome_message': 'Bem-vindo! Vejo que você chegou até aqui. Sou Cleber Mantuano, e cada experiência que tive me tornou mais capaz de resolver problemas reais. Que tal explorar um pouco mais?',
+                    'exploration_encouragement': 'Vejo que você está curioso! Cada link aqui conta uma história de como resolvi problemas e superei desafios. Às vezes, a melhor decisão é simplesmente começar.'
+                };
+            }
+            
+            setupInteractionTriggers() {
+                // Profile image hover
+                const profileImage = document.querySelector('.profile-image');
+                if (profileImage) {
+                    profileImage.addEventListener('mouseenter', () => {
+                        this.triggerSubtleResponse('profile_hover');
+                    });
+                }
+                
+                // Service links hover
+                const serviceLinks = document.querySelectorAll('.link-item');
+                serviceLinks.forEach(link => {
+                    link.addEventListener('mouseenter', () => {
+                        const text = link.querySelector('.link-text')?.textContent || '';
+                        if (text.includes('Serviços')) {
+                            this.triggerSubtleResponse('service_interest');
+                        } else if (text.includes('currículo') || text.includes('perfil')) {
+                            this.triggerSubtleResponse('curriculum_view');
+                        } else if (text.includes('WhatsApp') || text.includes('Falar')) {
+                            this.triggerSubtleResponse('whatsapp_interest');
+                        }
+                    });
+                });
+                
+                // Scroll-based interactions
+                let scrollCount = 0;
+                let lastScrollTime = 0;
+                
+                window.addEventListener('scroll', () => {
+                    const now = Date.now();
+                    scrollCount++;
+                    
+                    if (now - lastScrollTime > 3000 && scrollCount > 5) {
+                        this.triggerSubtleResponse('engagement_high');
+                        scrollCount = 0;
+                        lastScrollTime = now;
+                    }
+                });
+                
+                // Click tracking for deeper engagement
+                const links = document.querySelectorAll('.link-item');
+                links.forEach(link => {
+                    link.addEventListener('click', () => {
+                        const text = link.querySelector('.link-text')?.textContent || '';
+                        if (text.includes('currículo') || text.includes('perfil')) {
+                            setTimeout(() => this.triggerSubtleResponse('curriculum_view'), 1000);
+                        } else if (text.includes('WhatsApp') || text.includes('Falar')) {
+                            setTimeout(() => this.triggerSubtleResponse('whatsapp_interest'), 1000);
+                        }
+                    });
+                });
+                
+                // Time-based engagement
+                setTimeout(() => {
+                    this.triggerSubtleResponse('welcome_message');
+                }, 5000);
+                
+                // Mouse movement tracking for engagement
+                let mouseMoveCount = 0;
+                document.addEventListener('mousemove', () => {
+                    mouseMoveCount++;
+                    if (mouseMoveCount > 50 && !this.isActive) {
+                        const personalizedResponse = this.getPersonalizedResponse();
+                        this.showSubtleMessage(personalizedResponse);
+                        mouseMoveCount = 0;
+                    }
+                });
+            }
+            
+            triggerSubtleResponse(trigger) {
+                if (this.isActive) return;
+                
+                const response = this.responses[trigger];
+                if (response) {
+                    this.showSubtleMessage(response);
+                }
+            }
+            
+            showSubtleMessage(message) {
+                this.isActive = true;
+                
+                // Remove existing notifications
+                const existingNotifications = document.querySelectorAll('.ai-notification');
+                existingNotifications.forEach(notification => {
+                    notification.remove();
+                });
+                
+                // Create subtle notification
+                const notification = document.createElement('div');
+                notification.className = 'ai-notification';
+                notification.innerHTML = `
+                    <div class="ai-message">
+                        <span class="ai-indicator">💭</span>
+                        <span class="ai-text">${message}</span>
+                    </div>
+                `;
+                
+                document.body.appendChild(notification);
+                
+                // Animate in
+                setTimeout(() => {
+                    notification.classList.add('show');
+                }, 100);
+                
+                // Remove after display
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            notification.parentNode.removeChild(notification);
+                        }
+                        this.isActive = false;
+                    }, 500);
+                }, 5000);
+            }
+            
+            async generateDynamicResponse(context) {
+                try {
+                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${this.geminiApiKey}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            contents: [{
+                                parts: [{
+                                    text: `Você é um assistente sutil e profissional que ajuda a apresentar Cleber Mantuano. 
+                                    Contexto: ${context}
+                                    Responda de forma natural, profissional e sutil, como se fosse uma conversa casual.
+                                    Mantenha o tom confiante mas não arrogante. Máximo 2 frases.`
+                                }]
+                            }]
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+                } catch (error) {
+                    console.log('AI response generation failed:', error);
+                    return '';
+                }
+            }
+            
+            async triggerDynamicResponse(context) {
+                if (this.isActive) return;
+                
+                try {
+                    const dynamicMessage = await this.generateDynamicResponse(context);
+                    if (dynamicMessage) {
+                        this.showSubtleMessage(dynamicMessage);
+                    }
+                } catch (error) {
+                    console.log('Dynamic response failed, using fallback');
+                }
+            }
+            
+            getPersonalizedResponse() {
+                const { scrollCount, clickCount, hoverCount, timeOnPage } = this.userBehavior;
+                
+                if (timeOnPage > 30 && clickCount === 0) {
+                    return 'Vejo que você está analisando com cuidado. Às vezes, a melhor decisão é simplesmente começar. Que tal dar o primeiro passo?';
+                }
+                
+                if (scrollCount > 10 && hoverCount > 5) {
+                    return 'Você está explorando bastante! Isso mostra que valoriza profissionais que realmente entregam resultados. Cada projeto aqui é uma história de sucesso.';
+                }
+                
+                if (clickCount > 3) {
+                    return 'Excelente! Você está tomando decisões ativas. Isso é exatamente o que eu valorizo - pessoas que sabem o que querem e vão atrás.';
+                }
+                
+                return this.responses['exploration_encouragement'];
+            }
+        }
+        
         // Initialize everything when DOM is loaded
         document.addEventListener('DOMContentLoaded', function() {
             initializeApp();
@@ -874,6 +1358,40 @@
             setupAnimationObserver();
             setupTouchEnhancements();
             preloadCriticalResources();
+            
+            // Initialize AI interaction system
+            window.interactiveAI = new InteractiveAI();
+            
+            // Add engagement indicator
+            const engagementIndicator = document.createElement('div');
+            engagementIndicator.className = 'engagement-indicator';
+            document.body.appendChild(engagementIndicator);
+            
+            // Show engagement indicator on scroll
+            let scrollTimeout;
+            window.addEventListener('scroll', () => {
+                engagementIndicator.classList.add('active');
+                clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(() => {
+                    engagementIndicator.classList.remove('active');
+                }, 2000);
+            });
+            
+            // Add subtle breathing animation to profile card
+            const profileCard = document.querySelector('.profile-card');
+            if (profileCard) {
+                profileCard.style.animation = 'profileCardBreathing 4s ease-in-out infinite';
+            }
+            
+            // Add breathing animation keyframes
+            const breathingStyle = document.createElement('style');
+            breathingStyle.textContent = `
+                @keyframes profileCardBreathing {
+                    0%, 100% { transform: scale(1); }
+                    50% { transform: scale(1.002); }
+                }
+            `;
+            document.head.appendChild(breathingStyle);
         });
 
         // Initialize service worker when page is fully loaded
@@ -899,6 +1417,57 @@
         window.addEventListener('unhandledrejection', function(event) {
             console.error('Unhandled promise rejection:', event.reason);
         });
+        
+        // Micro-interactions for enhanced engagement
+        function setupMicroInteractions() {
+            // Add subtle hover effects to social links
+            const socialLinks = document.querySelectorAll('.social-link');
+            socialLinks.forEach(link => {
+                link.addEventListener('mouseenter', () => {
+                    link.style.transform = 'translateY(-3px) scale(1.1)';
+                    link.style.boxShadow = '0 15px 30px rgba(0, 0, 0, 0.2)';
+                });
+                
+                link.addEventListener('mouseleave', () => {
+                    link.style.transform = '';
+                    link.style.boxShadow = '';
+                });
+            });
+            
+            // Add click ripple effect
+            document.addEventListener('click', (e) => {
+                const ripple = document.createElement('div');
+                ripple.style.position = 'fixed';
+                ripple.style.left = e.clientX + 'px';
+                ripple.style.top = e.clientY + 'px';
+                ripple.style.width = '0';
+                ripple.style.height = '0';
+                ripple.style.background = 'rgba(52, 152, 219, 0.3)';
+                ripple.style.borderRadius = '50%';
+                ripple.style.pointerEvents = 'none';
+                ripple.style.transition = 'all 0.6s ease-out';
+                ripple.style.zIndex = '9999';
+                
+                document.body.appendChild(ripple);
+                
+                setTimeout(() => {
+                    ripple.style.width = '100px';
+                    ripple.style.height = '100px';
+                    ripple.style.left = (e.clientX - 50) + 'px';
+                    ripple.style.top = (e.clientY - 50) + 'px';
+                    ripple.style.opacity = '0';
+                }, 10);
+                
+                setTimeout(() => {
+                    if (ripple.parentNode) {
+                        ripple.parentNode.removeChild(ripple);
+                    }
+                }, 600);
+            });
+        }
+        
+        // Initialize micro-interactions
+        document.addEventListener('DOMContentLoaded', setupMicroInteractions);
     </script>
     
     <!-- Enhanced Schema.org structured data for better SEO -->
